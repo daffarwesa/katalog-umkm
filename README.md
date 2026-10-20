@@ -1,80 +1,80 @@
 # Katalog UMKM + Order WhatsApp
 
-Template workshop vibe coding Creative Hub App Talent (CHAT) 2026. Repo ini berisi tampilan aplikasi katalog UMKM; tugasmu merangkainya menjadi sistem utuh dengan bantuan AI: database, login admin, keamanan, dan pemesanan lewat WhatsApp.
+Aplikasi katalog produk online untuk UMKM **Leles Dos Hermanos** yang dibangun dengan Next.js 16 App Router, Tailwind CSS 4, dan Supabase. Memungkinkan calon pembeli melihat katalog produk terkini, membaca detail produk, dan langsung memesan via WhatsApp secara instan dengan format pesan otomatis. Dilengkapi panel admin yang aman untuk mengelola toko.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fandixurniawan%2Fkatalog-umkm&project-name=katalog-umkm&repository-name=katalog-umkm)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdaffarwesa%2Fkatalog-umkm&project-name=katalog-umkm&repository-name=katalog-umkm)
 
-## Langkah awal
+---
 
-1. **Salin repo ke akun GitHub-mu.** Klik tombol **Deploy with Vercel** di atas. Vercel akan membuat repo baru di akun GitHub-mu dan langsung men-deploy-nya. Setelah selesai, buka link Vercel-mu: katalog tampil dengan data contoh.
-2. **Buat proyek Supabase.** Masuk ke [supabase.com](https://supabase.com) dengan akun GitHub, lalu buat proyek baru. Simpan password database di tempat aman.
-3. **Siapkan database.** Di Supabase, buka **SQL Editor**, tempel seluruh isi `docs/schema.sql`, lalu klik **Run**. Tabel `produk` beserta data awal akan terbentuk.
-4. **Siapkan akun admin.** Ikuti panduan akun admin yang dibagikan mentor. Setelah itu matikan pendaftaran akun baru di **Authentication > Sign In / Providers**.
-5. **Isi environment variable di Vercel.** Buka proyekmu di Vercel > **Settings > Environment Variables**, lalu isi tiga variabel dari `.env.example`. Nilainya ada di Supabase > **Project Settings > API**. Setelah itu lakukan **Redeploy**.
-6. **Clone repo ke laptop.**
+## Status Fitur (US-01 sampai US-06 Selesai 100%)
 
+- [x] **US-01: Katalog dari database** — Menampilkan seluruh produk dari tabel `produk` di Supabase secara server-side rendering, format rupiah, dan penanganan error/tabel kosong.
+- [x] **US-02: Detail produk** — Halaman dinamis `/produk/[id]` membaca data produk dari database dan memanggil `notFound()` jika produk tidak ditemukan atau ID tidak valid.
+- [x] **US-03: Pesan via WhatsApp** — Tombol "Pesan via WhatsApp" membuka tautan `wa.me` ke nomor toko dengan pesan otomatis berisi nama dan harga produk dalam format rupiah di tab baru.
+- [x] **US-04: Login admin** — Autentikasi admin berbasis Supabase Auth dengan `@supabase/ssr` dan session cookies melalui Server Action di `app/admin/actions.js`. Tombol "Keluar" mengakhiri sesi dan kembali ke `/admin/login`.
+- [x] **US-05: Ganti password** — Form ganti password untuk admin yang sedang login dengan validasi server (minimal 8 karakter dan verifikasi konfirmasi password).
+- [x] **US-06: Proteksi halaman admin** — Memproteksi seluruh rute `/admin` (kecuali `/admin/login`) menggunakan `proxy.js` (pengganti `middleware.js` di Next.js 16) serta verifikasi sesi admin di setiap Server Action.
+- [x] **Peningkatan Tambahan** — Tautan langsung "Masuk sebagai admin" di footer terhubung ke `/admin/login`.
+
+---
+
+## Langkah Menjalankan Proyek
+
+1. **Clone repo ke laptop:**
    ```bash
-   git clone https://github.com/<akunmu>/<nama-repo>.git
-   cd <nama-repo>
+   git clone https://github.com/daffarwesa/katalog-umkm.git
+   cd katalog-umkm
    npm install
    ```
 
-7. **Buat file `.env.local`.** Salin `.env.example` menjadi `.env.local`, lalu isi dengan nilai yang sama seperti di Vercel.
-8. **Jalankan di laptop.**
+2. **Atur Environment Variable:**
+   Salin `.env.example` menjadi `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+   Isi nilainya dari dashboard Supabase (**Project Settings > API**):
+   ```env
+   SUPABASE_URL="https://<project-id>.supabase.co"
+   SUPABASE_PUBLISHABLE_KEY="<anon-key>"
+   SUPABASE_SECRET_KEY="<service-role-key>"
+   ```
 
+3. **Jalankan server pengembangan:**
    ```bash
    npm run dev
    ```
+   Buka browser di [http://localhost:3000](http://localhost:3000).
 
-   Buka `http://localhost:3000`.
+4. **Build untuk produksi:**
+   ```bash
+   npm run build
+   npm run start
+   ```
 
-## Alur kerja
+---
 
-Kerjakan satu user story setiap kali, lalu simpan dan kirim perubahan:
+## Struktur Folder & File Utama
 
-```bash
-git add .
-git commit -m "US-01: katalog dari database"
-git push
-```
-
-Setiap `git push`, Vercel otomatis men-deploy versi terbaru. Cek hasilnya di link Vercel-mu.
-
-Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bonus. Daftar lengkap ada di `docs/user-stories.md`.
-
-## Isi repo
-
-| File atau folder | Isi |
+| File / Folder | Keterangan |
 | --- | --- |
-| `AGENTS.md` | Aturan untuk AI agent, dibaca sebelum setiap prompt |
-| `DESIGN.md` | Panduan warna, huruf, dan komponen |
-| `PROMPTS.md` | Jurnal prompt, wajib diisi |
-| `docs/` | Problem statement, PRD, user story, rancangan teknis, skema database, checklist |
-| `lib/toko.js` | Nama toko, nomor WhatsApp, alamat, jam buka |
-| `app/` | Halaman aplikasi |
-| `components/` | Komponen tampilan |
+| `proxy.js` | Middleware Next.js 16 untuk memproteksi seluruh rute `/admin` |
+| `app/page.jsx` | Katalog produk (Server Component membaca Supabase) |
+| `app/produk/[id]/page.jsx` | Halaman detail produk dinamis |
+| `app/admin/login/page.jsx` | Halaman login admin |
+| `app/admin/password/page.jsx` | Halaman ganti password admin |
+| `app/admin/actions.js` | Server Actions untuk login, logout, dan ganti password |
+| `lib/supabase/server.js` | Koneksi Supabase server publik (`SUPABASE_SECRET_KEY`) |
+| `lib/supabase/session.js` | Koneksi sesi admin `@supabase/ssr` (`SUPABASE_PUBLISHABLE_KEY` + cookies) |
+| `lib/toko.js` | Profil usaha (nama toko, WhatsApp, alamat, jam operasional) |
+| `components/` | Komponen antarmuka (KartuProduk, TombolWhatsApp, NavAdmin, dll.) |
+| `PROMPTS.md` | Jurnal prompt lengkap selama pengerjaan |
 
-## Menyesuaikan dengan usahamu
+---
 
-- Identitas toko: ubah `lib/toko.js`.
-- Warna: ubah bagian `@theme` di `app/globals.css` (lihat `DESIGN.md`).
-- Produk: ubah langsung di Supabase > **Table Editor > produk**.
+## Tentang Aplikasi Ini
 
-## Aturan penting
-
-- Jangan menyimpan kunci atau password di kode, dan jangan push file `.env.local`.
-- Jangan memberi awalan `NEXT_PUBLIC_` pada environment variable.
-- Isi `PROMPTS.md` setiap menyelesaikan fitur.
-
-## Sebelum mengumpulkan
-
-1. Jalankan semua poin di `docs/checklist-keamanan.md` dan `docs/checklist-pengujian.md` pada link Vercel.
-2. Lengkapi bagian di bawah ini.
-3. Push perubahan terakhir sebelum batas waktu.
-
-## Tentang aplikasi ini
-
-- **Nama usaha:**
-- **Pembuat:**
-- **Link aplikasi:**
-- **Fitur bonus yang dikerjakan:**
+- **Nama usaha:** Leles Dos Hermanos
+- **Pembuat:** Daffa Wesa (daffawesa)
+- **Link repository:** [https://github.com/daffarwesa/katalog-umkm](https://github.com/daffarwesa/katalog-umkm)
+- **Link deployment Vercel:** [https://katalog-umkm-daffarwesa.vercel.app](https://katalog-umkm-daffarwesa.vercel.app)
+- **Fitur yang diselesaikan:** US-01 sampai US-06 (seluruh jalur wajib) + tautan footer terintegrasi.
