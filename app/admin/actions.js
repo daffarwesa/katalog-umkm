@@ -45,3 +45,49 @@ export async function logout() {
 
 export const keluar = logout;
 
+export async function gantiPassword(prevStateOrFormData, maybeFormData) {
+  let formData;
+  if (maybeFormData instanceof FormData) {
+    formData = maybeFormData;
+  } else if (prevStateOrFormData instanceof FormData) {
+    formData = prevStateOrFormData;
+  } else {
+    formData = maybeFormData || prevStateOrFormData;
+  }
+
+  const passwordBaru = formData?.get("password_baru");
+  const konfirmasiPassword = formData?.get("konfirmasi_password");
+
+  if (!passwordBaru || typeof passwordBaru !== "string" || passwordBaru.length < 8) {
+    return { error: "Password baru minimal 8 karakter." };
+  }
+
+  if (passwordBaru !== konfirmasiPassword) {
+    return { error: "Konfirmasi password tidak sama dengan password baru." };
+  }
+
+  const supabase = await createSessionClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return { error: "Anda harus masuk terlebih dahulu untuk mengganti password." };
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: passwordBaru,
+  });
+
+  if (updateError) {
+    return {
+      error: updateError.message || "Gagal mengganti password.",
+    };
+  }
+
+  return {
+    success: true,
+    message: "Password berhasil diperbarui.",
+  };
+}
